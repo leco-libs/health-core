@@ -1,5 +1,6 @@
 package co.l3co.health.core.config
 
+import co.l3co.health.core.controller.HealthControllerJavalin
 import co.l3co.health.core.domain.services.contracts.NoSqlDBService
 import co.l3co.health.core.domain.services.contracts.ServicesChecker
 import co.l3co.health.core.domain.services.contracts.SqlDBService
@@ -13,4 +14,5 @@ val healthModule = module {
     single { SqlDBServiceImpl() as SqlDBService }
     single { NoSqlDBServiceImpl() as NoSqlDBService }
     single { ServicesCheckerImpl() as ServicesChecker }
+    single { HealthControllerJavalin(get()) }
 }
