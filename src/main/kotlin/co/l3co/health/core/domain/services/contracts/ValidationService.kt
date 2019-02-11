@@ -1,10 +1,11 @@
 package co.l3co.health.core.domain.services.contracts
 
-import com.sun.tools.classfile.Dependency
+import co.l3co.health.core.domain.entities.Dependency
 
-interface ValidationService<T> {
+
+interface ValidationService {
 
     fun checkStatus(): Boolean
-    fun statusComplete(): Map<String, T?>
+    fun statusComplete(): Map<String, Dependency?>
     fun parametersValidation(): Boolean
 }

@@ -1,11 +1,14 @@
 package co.l3co.health.core.controller
 
+import co.l3co.health.core.domain.services.contracts.ServicesChecker
 import io.javalin.Context
 
-class HealthControllerJavalin : HealthController<Context> {
-    override fun complete(ctx: Context) {
+class HealthControllerJavalin(override val checker: ServicesChecker) : HealthController<Context> {
+    override inline fun basic(context: Context) {
+        context.json(checker.checkAllStatus())
     }
 
-    override fun basic(ctx: Context) {
+    override inline fun complete(ctx: Context) {
+        ctx.json(checker.checkAllComplete())
     }
 }
