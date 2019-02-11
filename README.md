@@ -1,5 +1,9 @@
 # Health-core
 
+<a href='https://bintray.com/leco-libs/health-core/health-core?source=watch' alt='Get automatic notifications about new "health-core" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a><a href='https://bintray.com/leco-libs/health-core/health-core?source=watch' alt='Get automatic notifications about new "health-core" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
+
+[ ![Download](https://api.bintray.com/packages/leco-libs/health-core/health-core/images/download.svg) ](https://bintray.com/leco-libs/health-core/health-core/_latestVersion)
+
 ## About
 
 Health core is a simple health check, designed to validate the dependencies of applications that use javalin or ktor.
@@ -44,6 +48,16 @@ $ export NOSQL_DATABASE_CHECK=false
 $ export NOSQL_DATABASE_CHECK=true
 ```
 
+## Repository
+
+```bash
+repositories {
+    maven {
+        url  "https://dl.bintray.com/leco-libs/health-core" 
+    }
+}
+```
+
 ## Dependency
 
 Dependency requirement by `Javalin`:
@@ -66,6 +80,22 @@ dependencies {
     implementation 'org.litote.kmongo:kmongo:3.9.2'
 }
 
+```
+
+> and add 
+
+Create one folder with name `libs` and add `health-core-1.0-SNAPSHOT.jar`
+now configure your gradle.properties.
+
+```bash
+flatDir {
+        dirs 'libs'
+}
+``` 
+> add dependency
+
+```bash
+compile "co.l3co:health-core:1.0-SNAPSHOT"
 ```
 
 ## Setup Javalin + Koin
