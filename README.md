@@ -4,6 +4,8 @@
 
 Health core is a simple health check, designed to validate the dependencies of applications that use javalin or ktor.
 
+## Environments
+
 > Sql
 
 Database Support
@@ -35,31 +37,16 @@ $ export NOSQL_DATABASE_PASSWORD=sa
 $ export NOSQL_DATABASE_CHECK=true
 ```
 
-## Dependency
+> if you need disable dependencies, by default is false 
 
-Dependency requirement by `Javalin:
-
-   * Gradle
-
-```properties
-dependencies {
-    # Dependency Injection 
-    api 'org.koin:koin-core:1.0.2'
-    # Api 
-    api 'io.javalin:javalin:2.6.0'
-    # required by javalin
-    compile "org.slf4j:slf4j-simple:1.7.25"
-    # required by javalin
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-    # If you using sql database
-    runtime 'org.postgresql:postgresql:42.2.5'
-    # If you using mongo
-    implementation 'org.litote.kmongo:kmongo:3.9.2'
-}
-
+```bash
+$ export NOSQL_DATABASE_CHECK=false
+$ export NOSQL_DATABASE_CHECK=true
 ```
 
-Dependency requirement by `Ktor:
+## Dependency
+
+Dependency requirement by `Javalin`:
 
    * Gradle
 
@@ -67,19 +54,14 @@ Dependency requirement by `Ktor:
 dependencies {
     # Dependency Injection 
     api 'org.koin:koin-core:1.0.2'
-    
     # Api 
     api 'io.javalin:javalin:2.6.0'
-    
     # required by javalin
     compile "org.slf4j:slf4j-simple:1.7.25"
-    
     # required by javalin
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-    
     # If you using sql database
     runtime 'org.postgresql:postgresql:42.2.5'
-    
     # If you using mongo
     implementation 'org.litote.kmongo:kmongo:3.9.2'
 }
@@ -217,3 +199,7 @@ fun main() {
    }
 }
 ```
+
+## Example
+
+* [Github](https://github.com/leco-poc-projects/javalin-health) 
