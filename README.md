@@ -52,11 +52,12 @@ $ export NOSQL_DATABASE_CHECK=true
 
 ```bash
 repositories {
-    maven {
-        url  "https://dl.bintray.com/leco-libs/health-core" 
+    flatDir {
+            dirs 'libs'
     }
 }
-```
+``` 
+
 
 ## Dependency
 
@@ -77,22 +78,15 @@ dependencies {
     # If you using sql database
     runtime 'org.postgresql:postgresql:42.2.5'
     # If you using mongo
-    implementation 'org.litote.kmongo:kmongo:3.9.2'
+    api 'org.litote.kmongo:kmongo:3.9.2'
 }
 
 ```
 
 > and add 
 
-Create one folder with name `libs` and add `health-core-1.0-SNAPSHOT.jar`
-now configure your gradle.properties.
-
-```bash
-flatDir {
-        dirs 'libs'
-}
-``` 
-> add dependency
+Create folder name `libs` and add `health-core-1.0-SNAPSHOT.jar`.
+Configure your gradle.properties.
 
 ```bash
 compile "co.l3co:health-core:1.0-SNAPSHOT"
