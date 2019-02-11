@@ -5,6 +5,6 @@ import com.sun.tools.classfile.Dependency
 interface ValidationService<T> {
 
     fun checkStatus(): Boolean
-    fun statusComplete(): Map<String, T>
+    fun statusComplete(): Map<String, T?>
     fun parametersValidation(): Boolean
 }
