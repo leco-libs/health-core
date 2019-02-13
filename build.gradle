@@ -18,7 +18,7 @@ bintray {
         userOrg = 'leco-libs'
         repo = 'health-core'
         name = 'health-core'
-        licenses = ['MIT']
+        licenses = ['MIT', 'APACHE']
         vcsUrl = 'https://github.com/leco-libs/health-core'
     }
 }
