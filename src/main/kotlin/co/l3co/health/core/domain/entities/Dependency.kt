@@ -8,10 +8,4 @@ class Dependency(
     val status: Boolean,
     val elapsed: Long?,
     val lastRunning: LocalDateTime
-
-
-) {
-    override fun toString(): String {
-        return "Dependency(name='$name', address='$address', status=$status, elapsed=$elapsed, lastRunning=$lastRunning)"
-    }
-}
+)
