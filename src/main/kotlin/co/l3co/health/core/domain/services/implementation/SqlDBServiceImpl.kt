@@ -15,6 +15,7 @@ class SqlDBServiceImpl : SqlDBService {
     private val SQL_DATABASE_USERNAME: String = System.getenv("SQL_DATABASE_USERNAME") ?: ""
     private val SQL_DATABASE_PASSWORD: String = System.getenv("SQL_DATABASE_PASSWORD") ?: ""
 
+
     override fun parametersValidation(): Boolean {
         return SQL_DATABASE_DRIVER.isNotBlank()
                 && SQL_DATABASE_URL.isNotBlank()
@@ -46,14 +47,12 @@ class SqlDBServiceImpl : SqlDBService {
                 databaseAvailable()
                 val end = System.currentTimeMillis()
 
-                result.put(
-                    "database", Dependency(
-                        name = getName(),
-                        status = true,
-                        elapsed = (end - start),
-                        lastRunning = LocalDateTime.now(),
-                        address = extractAddress()
-                    )
+                result["database"] = Dependency(
+                    name = getName(),
+                    status = true,
+                    elapsed = (end - start),
+                    lastRunning = LocalDateTime.now(),
+                    address = extractAddress()
                 )
 
             } catch (e: Exception) {
@@ -72,11 +71,7 @@ class SqlDBServiceImpl : SqlDBService {
         )
     }
 
-    private fun extractAddress(): String {
-        val regex = Regex("jdbc\\:\\w*\\:\\/\\/(\\w*)\\:\\d*\\/\\w*")
-        val address = regex.find(SQL_DATABASE_URL)
-        return address?.groupValues?.get(1) ?: "UNDEFINED"
-    }
+    private fun extractAddress() = Regex(PATTERN).find(SQL_DATABASE_URL)?.groupValues?.get(1) ?: DEFAULT_MESSAGE
 
     private fun databaseAvailable() {
         transaction {
@@ -93,13 +88,17 @@ class SqlDBServiceImpl : SqlDBService {
         if ("mysql" in name) return "MYSQL"
         if ("sqlite" in name) return "SQLITE"
         if ("h2" in name) return "H2"
-        return "UNDEFINED"
+        return DEFAULT_MESSAGE
     }
 
-    private fun query(): String {
-        return when (SQL_DATABASE_DRIVER) {
-            "oracle.jdbc.driver.OracleDriver" -> "Select * from dual"
-            else -> "Select 1"
-        }
+    private fun query() = when (SQL_DATABASE_DRIVER) {
+        "oracle.jdbc.driver.OracleDriver" -> "Select * from dual"
+        else -> "Select 1"
+
+    }
+
+    companion object {
+        const val PATTERN = "jdbc\\:\\w*\\:\\/\\/(\\w*)\\:\\d*\\/\\w*"
+        const val DEFAULT_MESSAGE = "UNKNOWN"
     }
 }
