@@ -26,6 +26,7 @@ bintray {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation 'org.jetbrains.exposed:exposed:0.12.1'
+    implementation 'redis.clients:jedis:3.0.1'
     implementation 'org.litote.kmongo:kmongo:3.9.2'
 
     compileOnly 'io.javalin:javalin:2.6.0'
