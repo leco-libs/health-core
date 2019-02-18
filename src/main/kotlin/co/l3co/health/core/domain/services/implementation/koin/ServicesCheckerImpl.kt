@@ -1,10 +1,7 @@
 package co.l3co.health.core.domain.services.implementation.koin
 
 import co.l3co.health.core.domain.entities.Dependency
-import co.l3co.health.core.domain.services.contracts.NoSqlDBService
-import co.l3co.health.core.domain.services.contracts.ServicesChecker
-import co.l3co.health.core.domain.services.contracts.SqlDBService
-import co.l3co.health.core.domain.services.contracts.ValidationService
+import co.l3co.health.core.domain.services.contracts.*
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
 
@@ -12,6 +9,7 @@ class ServicesCheckerImpl : KoinComponent, ServicesChecker {
 
     private val SQL_DATABASE_CHECK = System.getenv("SQL_DATABASE_CHECK")?.toBoolean() ?: false
     private val NOSQL_DATABASE_CHECK = System.getenv("NOSQL_DATABASE_CHECK")?.toBoolean() ?: false
+    private val CACHE_CHECK = System.getenv("CACHE_CHECK")?.toBoolean() ?: false
 
     override fun getDependencies(): List<ValidationService> {
         var dependencies = mutableListOf<ValidationService>()
@@ -24,6 +22,12 @@ class ServicesCheckerImpl : KoinComponent, ServicesChecker {
             val noSqlDBService by inject<NoSqlDBService>()
             dependencies.add(noSqlDBService)
         }
+
+        if (CACHE_CHECK) {
+            val cacheService by inject<CacheService>()
+            dependencies.add(cacheService)
+        }
+
         return dependencies
     }
 

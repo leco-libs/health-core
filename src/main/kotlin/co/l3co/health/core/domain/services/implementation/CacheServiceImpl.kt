@@ -4,23 +4,42 @@ import co.l3co.health.core.domain.entities.Dependency
 import co.l3co.health.core.domain.services.contracts.CacheService
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.JedisCluster
+import java.time.LocalDateTime
 
 class CacheServiceImpl : CacheService {
 
-    private val CACHE_HOSTNAMES = System.getenv("CACHE_HOSTNAMES") ?: "localhost:7379"
+    private val CACHE_HOSTNAME = System.getenv("CACHE_HOSTNAME") ?: "localhost:7379"
     private val PATTERN = """(\w*\:\d{0,4})"""
 
-    override fun checkStatus(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun checkStatus() = try {
+        openConnection()
+        true
+    } catch (ex: Exception) {
+        false
     }
 
     override fun statusComplete(): Map<String, Dependency?> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var result = HashMap<String, Dependency>()
+        val start = System.currentTimeMillis()
+        openConnection()
+        val end = System.currentTimeMillis()
+
+        result["cache"] = Dependency(
+            name = "redis",
+            status = true,
+            elapsed = (end - start),
+            lastRunning = LocalDateTime.now(),
+            address = extractHostAndPort(CACHE_HOSTNAME).map { it.host }.joinToString { "," }
+        )
+        return result
     }
 
-    private fun openConnection() {
-        val regex = Regex(PATTERN)
-        regex.findAll(CACHE_HOSTNAMES).forEach { it.value }
+    private fun openConnection(): List<String> {
+        val result = mutableListOf<String>()
+        val jedisCluster = JedisCluster(extractHostAndPort(CACHE_HOSTNAME))
+        jedisCluster.clusterNodes.forEach { t, u -> u.resource.ping(); result.add(t) }
+        jedisCluster.close()
+        return result
     }
 
     fun extractHostAndPort(string: String): Set<HostAndPort> {
@@ -38,7 +57,7 @@ class CacheServiceImpl : CacheService {
     }
 
     override fun parametersValidation(): Boolean {
-        return CACHE_HOSTNAMES.isNotBlank()
+        return CACHE_HOSTNAME.isNotBlank()
     }
 
 }
