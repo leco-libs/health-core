@@ -40,12 +40,22 @@ $ export NOSQL_DATABASE_USERNAME=sa
 $ export NOSQL_DATABASE_PASSWORD=sa
 $ export NOSQL_DATABASE_CHECK=true
 ```
+> Cache
+
+   - Redis
+
+```bash
+$ export NOSQL_DATABASE_HOSTNAME=localhost:port, localhost:port
+$ export CACHE_CHECK=true
+```
 
 > if you need disable dependencies, by default is false 
 
 ```bash
 $ export NOSQL_DATABASE_CHECK=false
-$ export NOSQL_DATABASE_CHECK=true
+$ export NOSQL_DATABASE_CHECK=false
+$ export CACHE_CHECK=false
+
 ```
 
 ## Repository
