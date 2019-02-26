@@ -1,14 +1,11 @@
-package co.l3co.health.core.domain.services.implementation
+package co.l3co.health.core.domain.services.implementation.koin
 
 import co.l3co.health.core.application.config.EnvironmentConfig
-import co.l3co.health.core.application.config.EnvironmentConfig.Companion.CACHE_HOSTNAME
 import co.l3co.health.core.domain.entities.Dependency
 import co.l3co.health.core.domain.entities.Status
 import co.l3co.health.core.domain.services.contracts.CacheService
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.Jedis
-import redis.clients.jedis.JedisCluster
-import redis.clients.jedis.JedisPool
 import java.time.LocalDateTime
 
 class CacheServiceImpl(
@@ -18,26 +15,21 @@ class CacheServiceImpl(
     private val hostname: String =
         environmentConfig.cacheHostname ?: throw NullPointerException("Cache hostname is required!")
 
-    override fun checkStatus() = !openConnection(this.hostname).containsValue(Status.DOWN.name)
-
     override fun statusComplete(): Map<String, Dependency?> {
-
-        val result = HashMap<String, Dependency>()
         val start = System.currentTimeMillis()
-        val openConnection = openConnection(hostname)
         val end = System.currentTimeMillis()
-
-        result["cache"] = Dependency(
-            name = "redis",
-            status = true,
-            elapsed = (end - start),
-            lastRunning = LocalDateTime.now(),
-            address = openConnection.map { "${it.key} -> ${it.value}" }.joinToString { "," }
+        return mapOf<String, Dependency?>(
+            "cache" to Dependency(
+                name = "redis",
+                status = this.checkStatus(),
+                elapsed = (end - start),
+                lastRunning = LocalDateTime.now(),
+                address = this.getAddress()
+            )
         )
-        return result
     }
 
-    private fun openConnection(hostname: String): Map<String, String> {
+    override fun createConnection(): Map<String, String> {
         val hostTested = mutableMapOf<String, String>()
         extractHostAndPort(hostname).forEach {
             try {

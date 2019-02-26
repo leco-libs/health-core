@@ -1,6 +1,6 @@
 package co.l3co.health.core.service.unit
 
-import co.l3co.health.core.domain.services.implementation.CacheServiceImpl
+import co.l3co.health.core.domain.services.implementation.koin.CacheServiceImpl
 import org.junit.Assert
 import org.junit.Test
 

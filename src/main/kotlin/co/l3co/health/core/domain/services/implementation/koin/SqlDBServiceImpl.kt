@@ -1,4 +1,4 @@
-package co.l3co.health.core.domain.services.implementation
+package co.l3co.health.core.domain.services.implementation.koin
 
 import co.l3co.health.core.domain.entities.Dependency
 import co.l3co.health.core.domain.services.contracts.SqlDBService

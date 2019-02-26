@@ -1,6 +1,6 @@
 package co.l3co.health.core.service.integration
 
-import co.l3co.health.core.domain.services.implementation.SqlDBServiceImpl
+import co.l3co.health.core.domain.services.implementation.koin.SqlDBServiceImpl
 import org.junit.Assert
 import org.junit.Test
 
