@@ -1,5 +1,11 @@
 package co.l3co.health.core.domain.services.implementation
 
+import co.l3co.health.core.application.config.EnvironmentConfig
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.NOSQL_DATABASE_HOSTNAME
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.NOSQL_DATABASE_NAME
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.NOSQL_DATABASE_PASSWORD
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.NOSQL_DATABASE_PORT
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.NOSQL_DATABASE_USERNAME
 import co.l3co.health.core.domain.entities.Dependency
 import co.l3co.health.core.domain.services.contracts.NoSqlDBService
 import com.mongodb.MongoClient
@@ -9,13 +15,9 @@ import org.litote.kmongo.KMongo
 import java.lang.Exception
 import java.time.LocalDateTime
 
-class NoSqlDBServiceImpl : NoSqlDBService {
-
-    private val NOSQL_DATABASE_HOSTNAME: String = System.getenv("NOSQL_DATABASE_HOSTNAME") ?: ""
-    private val NOSQL_DATABASE_PORT: Int = System.getenv("NOSQL_DATABASE_PORT")?.toInt() ?: 27017
-    private val NOSQL_DATABASE_NAME: String = System.getenv("NOSQL_DATABASE_NAME") ?: ""
-    private val NOSQL_DATABASE_USERNAME: String = System.getenv("NOSQL_DATABASE_USERNAME") ?: ""
-    private val NOSQL_DATABASE_PASSWORD: String = System.getenv("NOSQL_DATABASE_PASSWORD") ?: ""
+class NoSqlDBServiceImpl(
+    private val environmentConfig: EnvironmentConfig
+) : NoSqlDBService {
 
     override fun checkStatus(): Boolean {
         var connection: MongoClient? = null
@@ -31,8 +33,8 @@ class NoSqlDBServiceImpl : NoSqlDBService {
 
     override fun statusComplete(): Map<String, Dependency?> {
         var connection: MongoClient? = null
-        var result = HashMap<String, Dependency>()
-        if (parametersValidation()) {
+        val result = HashMap<String, Dependency>()
+
             try {
                 val start = System.currentTimeMillis()
 
@@ -45,7 +47,7 @@ class NoSqlDBServiceImpl : NoSqlDBService {
                     status = true,
                     elapsed = (end - start),
                     lastRunning = LocalDateTime.now(),
-                    address = NOSQL_DATABASE_HOSTNAME
+                    address = en
                 )
             } finally {
                 connection?.close()
@@ -54,22 +56,18 @@ class NoSqlDBServiceImpl : NoSqlDBService {
         return result
     }
 
-    override fun parametersValidation(): Boolean {
-        return NOSQL_DATABASE_HOSTNAME.isNotBlank()
-                && NOSQL_DATABASE_USERNAME.isNotBlank()
-                && NOSQL_DATABASE_PASSWORD.isNotBlank()
-                && NOSQL_DATABASE_NAME.isNotBlank()
-    }
-
     private fun buildConnection(): MongoClient {
         val credentials = listOf(
             MongoCredential.createCredential(
-                NOSQL_DATABASE_USERNAME,
-                NOSQL_DATABASE_NAME,
-                NOSQL_DATABASE_PASSWORD.toCharArray()
+                environmentConfig.nosqlDatabaseUsername!!,
+                environmentConfig.nosqlDatabaseName!!,
+                environmentConfig.nosqlDatabasePassword!!.toCharArray()
             )
         )
-        val serverAddress = ServerAddress(NOSQL_DATABASE_HOSTNAME, NOSQL_DATABASE_PORT)
+        val serverAddress = ServerAddress(
+            environmentConfig.nosqlDatabaseHostname!!,
+            environmentConfig.nosqlDatabasePort!!
+        )
 
         return KMongo.createClient(serverAddress, credentials)
     }

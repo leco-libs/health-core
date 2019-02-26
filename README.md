@@ -1,7 +1,5 @@
 # Health-core
 
-<a href='https://bintray.com/leco-libs/health-core/health-core?source=watch' alt='Get automatic notifications about new "health-core" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a><a href='https://bintray.com/leco-libs/health-core/health-core?source=watch' alt='Get automatic notifications about new "health-core" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
-
 [ ![Download](https://api.bintray.com/packages/leco-libs/health-core/health-core/images/download.svg) ](https://bintray.com/leco-libs/health-core/health-core/_latestVersion)
 
 ## About
@@ -111,7 +109,7 @@ Sample :
 `Application.kt`
 
 ```kotlin
-import co.l3co.health.core.controller.HealthControllerJavalin
+import co.l3co.health.core.application.controller.HealthControllerJavalin
 import io.javalin.Javalin
 import org.koin.standalone.KoinComponent
 import org.koin.standalone.inject
@@ -139,7 +137,7 @@ class Application(private val port: Int) : KoinComponent {
 `Main.kt`
 
 ```kotlin
-import co.l3co.health.core.config.healthModule
+import co.l3co.health.core.application.config.healthModule
 import org.koin.standalone.StandAloneContext
 
 fun main() {
@@ -172,6 +170,28 @@ fun main() {
 [main] INFO org.eclipse.jetty.server.Server - Started @1040ms
 [main] INFO io.javalin.Javalin - Jetty is listening on: [http://localhost:7000/]
 [main] INFO io.javalin.Javalin - Javalin has started \o/
+```
+
+## Integration Test
+
+Run dependencies on docker
+
+```bash
+$ docker run --name health -p 6379:6379 -d redis
+$ docker run --name=test-health -d -p 5432:5432  -e POSTGRES_PASSWORD=sa -e POSTGRES_USER=sa -e POSTGRES_DB=health postgres
+$ docker run -e MONGO_INITDB_ROOT_USERNAME=sa -e MONGO_INITDB_ROOT_PASSWORD=sa -e MONGO_INITDB_DATABASE=health -d -p 27017:27017 mongo
+```
+
+> After
+
+```bash
+$ ./gradlew test
+```
+
+> Or build 
+
+```bash
+$ ./gradlew build
 ```
 
 ## Response

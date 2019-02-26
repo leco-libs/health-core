@@ -1,6 +1,6 @@
-package co.l3co.health.core.config
+package co.l3co.health.core.application.di
 
-import co.l3co.health.core.controller.HealthControllerJavalin
+import co.l3co.health.core.application.controller.HealthControllerJavalin
 import co.l3co.health.core.domain.services.contracts.CacheService
 import co.l3co.health.core.domain.services.contracts.NoSqlDBService
 import co.l3co.health.core.domain.services.contracts.ServicesChecker

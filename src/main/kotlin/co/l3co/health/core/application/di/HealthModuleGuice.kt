@@ -1,4 +1,4 @@
-package co.l3co.health.core.config
+package co.l3co.health.core.application.di
 
 import co.l3co.health.core.domain.services.contracts.NoSqlDBService
 import co.l3co.health.core.domain.services.contracts.ServicesChecker

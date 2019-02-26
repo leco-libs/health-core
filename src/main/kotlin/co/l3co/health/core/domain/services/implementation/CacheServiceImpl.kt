@@ -1,27 +1,30 @@
 package co.l3co.health.core.domain.services.implementation
 
+import co.l3co.health.core.application.config.EnvironmentConfig
+import co.l3co.health.core.application.config.EnvironmentConfig.Companion.CACHE_HOSTNAME
 import co.l3co.health.core.domain.entities.Dependency
+import co.l3co.health.core.domain.entities.Status
 import co.l3co.health.core.domain.services.contracts.CacheService
 import redis.clients.jedis.HostAndPort
+import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisCluster
+import redis.clients.jedis.JedisPool
 import java.time.LocalDateTime
 
-class CacheServiceImpl : CacheService {
+class CacheServiceImpl(
+    private val environmentConfig: EnvironmentConfig
+) : CacheService {
 
-    private val CACHE_HOSTNAME = System.getenv("CACHE_HOSTNAME") ?: "localhost:7379"
-    private val PATTERN = """(\w*\:\d{0,4})"""
+    private val hostname: String =
+        environmentConfig.cacheHostname ?: throw NullPointerException("Cache hostname is required!")
 
-    override fun checkStatus() = try {
-        openConnection()
-        true
-    } catch (ex: Exception) {
-        false
-    }
+    override fun checkStatus() = !openConnection(this.hostname).containsValue(Status.DOWN.name)
 
     override fun statusComplete(): Map<String, Dependency?> {
-        var result = HashMap<String, Dependency>()
+
+        val result = HashMap<String, Dependency>()
         val start = System.currentTimeMillis()
-        openConnection()
+        val openConnection = openConnection(hostname)
         val end = System.currentTimeMillis()
 
         result["cache"] = Dependency(
@@ -29,35 +32,37 @@ class CacheServiceImpl : CacheService {
             status = true,
             elapsed = (end - start),
             lastRunning = LocalDateTime.now(),
-            address = extractHostAndPort(CACHE_HOSTNAME).map { it.host }.joinToString { "," }
+            address = openConnection.map { "${it.key} -> ${it.value}" }.joinToString { "," }
         )
         return result
     }
 
-    private fun openConnection(): List<String> {
-        val result = mutableListOf<String>()
-        val jedisCluster = JedisCluster(extractHostAndPort(CACHE_HOSTNAME))
-        jedisCluster.clusterNodes.forEach { t, u -> u.resource.ping(); result.add(t) }
-        jedisCluster.close()
-        return result
+    private fun openConnection(hostname: String): Map<String, String> {
+        val hostTested = mutableMapOf<String, String>()
+        extractHostAndPort(hostname).forEach {
+            try {
+                Jedis(hostname).ping()
+                hostTested[it.host] = Status.UP.name
+            } catch (e: Exception) {
+                hostTested[it.host] = Status.DOWN.name
+            }
+        }
+        return hostTested
     }
 
     fun extractHostAndPort(string: String): Set<HostAndPort> {
-        val regex = Regex(PATTERN)
+        val regex = Regex(environmentConfig.cachePattern)
         val result = regex.findAll(string)
-        var response = mutableSetOf<HostAndPort>()
+        val response = mutableSetOf<HostAndPort>()
         result.forEach {
             it.groupValues
                 .distinct()
                 .forEach { group ->
-                    group.split(":").let { extract -> response.add(HostAndPort(extract[0], extract[1].toInt())) }
+                    group.split(":").let { extract ->
+                        response.add(HostAndPort(extract[0], extract[1].toInt()))
+                    }
                 }
         }
         return response
     }
-
-    override fun parametersValidation(): Boolean {
-        return CACHE_HOSTNAME.isNotBlank()
-    }
-
 }

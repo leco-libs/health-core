@@ -1,6 +1,6 @@
 package co.l3co.health.core.service.integration.koin
 
-import co.l3co.health.core.config.healthModule
+import co.l3co.health.core.application.config.healthModule
 import co.l3co.health.core.domain.services.contracts.ServicesChecker
 import org.junit.Assert
 import org.junit.Before

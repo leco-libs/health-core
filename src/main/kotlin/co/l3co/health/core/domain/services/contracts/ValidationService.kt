@@ -7,5 +7,4 @@ interface ValidationService {
 
     fun checkStatus(): Boolean
     fun statusComplete(): Map<String, Dependency?>
-    fun parametersValidation(): Boolean
 }
