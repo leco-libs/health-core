@@ -13,9 +13,9 @@ import org.koin.dsl.module.module
 
 val healthModule = module {
     // Service
-    single { SqlDBServiceImpl() as SqlDBService }
-    single { NoSqlDBServiceImpl() as NoSqlDBService }
-    single { CacheServiceImpl() as CacheService }
+    single { SqlDBServiceImpl(get()) as SqlDBService }
+    single { NoSqlDBServiceImpl(get()) as NoSqlDBService }
+    single { CacheServiceImpl(get()) as CacheService }
     single { ServicesCheckerImpl() as ServicesChecker }
     single { HealthControllerJavalin(get()) }
 }
